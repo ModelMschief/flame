@@ -5,22 +5,29 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>BotFusion— Telegram Bots</title>
 <meta name="theme-color" content="#00e5ff" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#000;
     --cyan:#00e5ff;
     --cyan-600:#00bcd4;
+    --magenta: #ff00e5;
     --card:#0b1722;
     --card-2:#0e1d2b;
     --text:#e6f7ff;
     --muted:#a8d8e6;
     --ring: rgba(0,229,255,.35);
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
   /* Reset-ish */
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
-  body{font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:var(--bg);color:var(--text);}
+  body{font-family: var(--font-sans);
+      background:var(--bg);color:var(--text);
+      font-size: 16px; /* Base font size */
+    }
 
   /* FULLSCREEN VIDEO BACKGROUND */
   .bg{
@@ -57,13 +64,16 @@
   .wrap{
     position:relative; min-height:100dvh; display:flex; align-items:center; justify-content:center;
     padding:clamp(16px,3vw,32px);
+    perspective: 1000px;
+    transform-style: preserve-3d;
   }
   .glass{
     width:min(1100px,95vw); border-radius:24px; padding:28px;
-    background: linear-gradient(180deg, rgba(11,23,34,.62), rgba(11,23,34,.38));
-    backdrop-filter: blur(10px) saturate(1.3);
-    border:1px solid rgba(0,229,255,.18);
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(12px) saturate(1.2);
+    border:1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 40px rgba(0,0,0,.35), 0 0 80px rgba(0,229,255,.08);
+    transition: transform 0.1s ease;
   }
   .topper{
             /* This is the key style to center it */
@@ -77,13 +87,22 @@
   }
   .logo{
     width:42px;height:42px;border-radius:12px;
-    background: radial-gradient(80% 80% at 50% 20%, var(--cyan) 0%, #0ef 30%, #004c5a 65%, #001318 100%);
+    background: linear-gradient(-45deg, var(--cyan), var(--magenta), var(--cyan));
+    background-size: 200% 200%;
     box-shadow: 0 0 30px rgba(0,229,255,.45), inset 0 0 10px rgba(255,255,255,.15);
+    animation: gradient-animation 5s ease infinite;
   }
-  h1{margin:0;font-size:clamp(1.6rem,3.5vw,2.4rem);letter-spacing:.2px}
+
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  h1{margin:0;font-size:clamp(1.8rem, 4vw, 2.8rem);letter-spacing:-.5px; font-weight: 700;}
   .tag{
-    margin:.25rem 0 1.25rem;color:var(--muted);
-    font-size:clamp(.95rem,2.1vw,1.05rem)
+    margin:.5rem 0 1.5rem;color:var(--muted);
+    font-size:clamp(1rem, 2.2vw, 1.1rem);
+    line-height: 1.5;
   }
 
   /* CTA AREA */
@@ -99,7 +118,11 @@
     box-shadow: 0 8px 30px rgba(0,229,255,.28), inset 0 1px 0 rgba(255,255,255,.35);
     transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
   }
-  .btn:hover{transform:translateY(-2px); filter:saturate(1.05)}
+  .btn:hover{
+    transform:translateY(-3px);
+    filter:saturate(1.1);
+    box-shadow: 0 12px 35px rgba(0,229,255,.4), inset 0 1px 0 rgba(255,255,255,.4);
+  }
   .btn:active{transform:translateY(0)}
   .ghost{
     --pad:12px 14px;
@@ -111,19 +134,39 @@
   .grid{
     display:grid; gap:16px; margin-top:22px;
     grid-template-columns: repeat(12,1fr);
+    perspective: 1000px;
   }
   .card{
+    position: relative;
     grid-column: span 12;
     background:linear-gradient(180deg, var(--card), var(--card-2));
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:16px; padding:18px 18px 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.35), 0 0 0 1px var(--ring) inset;
+    border-radius:16px; padding:20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
     opacity:0; transform: translateY(16px) scale(.98);
-    transition: opacity .6s ease, transform .6s ease;
+    transition: opacity .6s ease, transform .6s ease, box-shadow .2s ease;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px; /* border width */
+    background: linear-gradient(-45deg, var(--cyan), var(--magenta), var(--cyan));
+    background-size: 200% 200%;
+    animation: gradient-animation 5s ease infinite;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+  }
+  .card:hover{
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,.4), 0 0 40px rgba(0,229,255,.1);
   }
   .card.show{opacity:1; transform: translateY(0) scale(1)}
-  .card h3{margin:.1rem 0 .3rem; font-size:1.05rem; letter-spacing:.3px}
-  .card p{margin:0;color:#cdeefa;line-height:1.45}
+  .card h3{margin:.5rem 0 .6rem; font-size:1.15rem; letter-spacing:.2px; font-weight: 500;}
+  .card p{margin:0;color:#cdeefa;line-height:1.55; font-size: 1.05rem;}
   .meta{display:flex; gap:10px; align-items:center; color:#7fd9ea; font-size:.9rem}
   
   /* --- NEW STYLES FOR CARD ICONS --- */
@@ -141,7 +184,7 @@
 
   /* FOOT SMALL */
   .foot{
-    display:flex; justify-content:space-between; gap:12px; margin-top:16px; color:#93d7e8; font-size:.85rem
+    display:flex; justify-content:space-between; gap:12px; margin-top:24px; padding-top: 16px; border-top: 1px solid rgba(0,229,255,.1); color:#93d7e8; font-size:.9rem
   }
 
   /* ENTER ANIMATIONS */
@@ -343,6 +386,57 @@
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     app.classList.remove('hiddenAll'); // skip gating on very slow devices
   }
+
+  // Parallax effect for the glass panel
+  const glass = document.querySelector('.glass');
+  const wrap = document.querySelector('.wrap');
+
+  wrap.addEventListener('mousemove', (e) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const { clientX, clientY } = e;
+    const { offsetWidth, offsetHeight } = wrap;
+    const x = (clientX - offsetWidth / 2) / (offsetWidth / 2);
+    const y = (clientY - offsetHeight / 2) / (offsetHeight / 2);
+    
+    glass.style.transform = `rotateY(${x * 5}deg) rotateX(${-y * 5}deg)`;
+    
+    // Glowing effect
+    glass.style.background = `
+      radial-gradient(
+        circle at ${clientX}px ${clientY}px,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0) 40%
+      ),
+      linear-gradient(150deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))
+    `;
+  });
+
+  wrap.addEventListener('mouseleave', () => {
+    glass.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    glass.style.background = `linear-gradient(150deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))`;
+  });
+
+  // 3D tilt effect for cards
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const { width, height } = rect;
+      const rotateX = (y / height - 0.5) * -10; // -5 to 5
+      const rotateY = (x / width - 0.5) * 10; // -5 to 5
+      card.style.transition = 'transform 0.1s ease';
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transition = 'transform 0.5s ease';
+      card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+    });
+  });
 </script>
 </body>
 </html>
+
